@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "405295355898",
+    "firebase_url": "https://connectevent-ededb-default-rtdb.firebaseio.com",
+    "project_id": "connectevent-ededb",
+    "storage_bucket": "connectevent-ededb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:405295355898:android:abff3efae514dd93fcb643",
+        "android_client_info": {
+          "package_name": "com.example.connectevent"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1iiaSOYCogyJwsDhoW0nqWykVgWSsJpg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

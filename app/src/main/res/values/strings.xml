@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ConnectEvent</string>
+    <string name="title_activity_login_page">LoginPage</string>
+    <string name="title_activity_register_page">RegisterPage</string>
+    <string name="title_activity_forget_password_page">ForgetPasswordPage</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_dasnboard">Dasnboard</string>
+    <string name="title_activity_dashboard_page">DashboardPage</string>
+</resources>
