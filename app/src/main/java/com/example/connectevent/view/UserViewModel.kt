@@ -1,4 +1,4 @@
-package com.example.connectevent.viewmodel
+package com.example.connectevent.view
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -35,7 +35,7 @@ class UserViewModel(val repo: UserRepo): ViewModel(){
 
     }
 
-    fun editProfile(userId: String,model: UserModel,
+    fun editProfile(userId: String, model: UserModel,
                     callback:(Boolean, String)-> Unit){
         repo.editProfile(userId,model,callback)
 

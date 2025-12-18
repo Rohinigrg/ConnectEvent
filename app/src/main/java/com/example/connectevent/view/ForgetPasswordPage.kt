@@ -1,4 +1,4 @@
-package com.example.connectevent
+package com.example.connectevent.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -34,10 +33,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.connectevent.R
 import com.example.connectevent.repository.UserRepoImpl
-import com.example.connectevent.ui.theme.ConnectEventTheme
 import com.example.connectevent.ui.theme.White
-import com.example.connectevent.viewmodel.UserViewModel
+import com.example.connectevent.view.UserViewModel
 
 class ForgetPasswordPage : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

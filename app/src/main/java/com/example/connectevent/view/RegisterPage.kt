@@ -1,4 +1,4 @@
-package com.example.connectevent
+package com.example.connectevent.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -21,9 +21,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,12 +39,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.connectevent.R
 import com.example.connectevent.model.UserModel
 import com.example.connectevent.repository.UserRepoImpl
-import com.example.connectevent.ui.theme.Blue
-import com.example.connectevent.ui.theme.ConnectEventTheme
 import com.example.connectevent.ui.theme.White
-import com.example.connectevent.viewmodel.UserViewModel
+import com.example.connectevent.view.UserViewModel
 
 class RegisterPage : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

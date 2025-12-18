@@ -1,4 +1,4 @@
-package com.example.connectevent
+package com.example.connectevent.view
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

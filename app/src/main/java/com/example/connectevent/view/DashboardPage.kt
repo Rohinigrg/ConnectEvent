@@ -1,4 +1,4 @@
-package com.example.connectevent
+package com.example.connectevent.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -44,6 +44,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.connectevent.R
+import com.example.connectevent.ViewEventPage
 import com.example.connectevent.ui.theme.LightBlue
 import com.example.connectevent.ui.theme.White
 
@@ -161,16 +163,18 @@ fun HomeScreen(paddingValues: PaddingValues){
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            DashboardCard(R.drawable.createimg,
+            DashboardCard(
+                R.drawable.createimg,
                 onClick = {
                     context.startActivity(
-                        Intent(context,CreateEventPage::class.java)
+                        Intent(context, CreateEventPage::class.java)
                     )
                 })
-            DashboardCard(R.drawable.viewevents,
+            DashboardCard(
+                R.drawable.viewevents,
                 onClick = {
                     context.startActivity(
-                        Intent(context,ViewEventPage::class.java)
+                        Intent(context, ViewEventPage::class.java)
                     )
                 })
         }

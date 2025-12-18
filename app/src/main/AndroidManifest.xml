@@ -11,7 +11,7 @@
 
         <!-- LAUNCHER -->
         <activity
-            android:name=".SplashActivity"
+            android:name=".view.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -20,17 +20,17 @@
         </activity>
 
         <!-- AUTH -->
-        <activity android:name=".LoginPage" />
-        <activity android:name=".RegisterPage" />
-        <activity android:name=".ForgetPasswordPage" />
+        <activity android:name=".view.LoginPage" />
+        <activity android:name=".view.RegisterPage" />
+        <activity android:name=".view.ForgetPasswordPage" />
 
         <!-- DASHBOARD -->
-        <activity android:name=".DashboardPage" />
+        <activity android:name=".view.DashboardPage" />
 
         <!-- EVENTS -->
-        <activity android:name=".CreateEventPage" />
+        <activity android:name=".view.CreateEventPage" />
         <activity android:name=".ViewEventPage" />
-        <activity android:name=".MyEventsPage" />
+        <activity android:name=".view.MyEventsPage" />
 
     </application>
 
