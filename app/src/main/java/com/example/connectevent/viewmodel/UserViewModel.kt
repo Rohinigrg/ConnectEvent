@@ -1,4 +1,4 @@
-package com.example.connectevent.view
+package com.example.connectevent.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

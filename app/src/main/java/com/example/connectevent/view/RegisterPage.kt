@@ -43,7 +43,7 @@ import com.example.connectevent.R
 import com.example.connectevent.model.UserModel
 import com.example.connectevent.repository.UserRepoImpl
 import com.example.connectevent.ui.theme.White
-import com.example.connectevent.view.UserViewModel
+import com.example.connectevent.viewmodel.UserViewModel
 
 class RegisterPage : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

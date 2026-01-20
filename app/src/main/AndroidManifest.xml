@@ -8,30 +8,43 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ConnectEvent">
-
-        <!-- LAUNCHER -->
         <activity
-            android:name=".view.SplashActivity"
-            android:exported="true">
+            android:name=".view.Notification"
+            android:exported="true"
+            android:label="@string/title_activity_notification"
+            android:theme="@style/Theme.ConnectEvent">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".view.SplashActivity"
+            android:exported="true"
+            android:label="@string/title_activity_profile_page"
+            android:theme="@style/Theme.ConnectEvent">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-        <!-- AUTH -->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity> <!-- LAUNCHER -->
+        <activity
+            android:name=".view.DashboardPage"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity> <!-- AUTH -->
         <activity android:name=".view.LoginPage" />
         <activity android:name=".view.RegisterPage" />
-        <activity android:name=".view.ForgetPasswordPage" />
-
-        <!-- DASHBOARD -->
-        <activity android:name=".view.DashboardPage" />
-
-        <!-- EVENTS -->
-        <activity android:name=".view.CreateEventPage" />
-        <activity android:name=".ViewEventPage" />
+        <activity android:name=".view.ForgetPasswordPage" /> <!-- DASHBOARD -->
+        <activity android:name=".view.JoinEventPage" />
+        <activity android:name=".view.ViewEventPage" />
         <activity android:name=".view.MyEventsPage" />
-
     </application>
 
 </manifest>

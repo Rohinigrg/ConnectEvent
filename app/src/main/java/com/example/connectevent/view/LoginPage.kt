@@ -47,7 +47,7 @@ import com.example.connectevent.repository.UserRepoImpl
 import com.example.connectevent.ui.theme.LightBlue
 import com.example.connectevent.ui.theme.Skyblue
 import com.example.connectevent.ui.theme.White
-import com.example.connectevent.view.UserViewModel
+import com.example.connectevent.viewmodel.UserViewModel
 
 class LoginPage : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.example.connectevent.R
 import com.example.connectevent.repository.UserRepoImpl
 import com.example.connectevent.ui.theme.White
-import com.example.connectevent.view.UserViewModel
+import com.example.connectevent.viewmodel.UserViewModel
 
 class ForgetPasswordPage : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

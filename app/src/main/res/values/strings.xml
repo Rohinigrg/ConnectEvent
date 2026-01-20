@@ -6,4 +6,6 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="title_activity_dasnboard">Dasnboard</string>
     <string name="title_activity_dashboard_page">DashboardPage</string>
+    <string name="title_activity_profile_page">ProfilePage</string>
+    <string name="title_activity_notification">Notification</string>
 </resources>
