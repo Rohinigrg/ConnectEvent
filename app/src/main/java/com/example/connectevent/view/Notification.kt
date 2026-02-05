@@ -1,5 +1,6 @@
 package com.example.connectevent.view
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -43,6 +45,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.DisposableEffect
+
 
 class Notification : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,6 +58,7 @@ class Notification : ComponentActivity() {
         }
     }
 }
+@SuppressLint("ContextCastToActivity")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationScreen(){
@@ -61,31 +67,55 @@ fun NotificationScreen(){
 
     var notifications by remember { mutableStateOf(listOf<NotificationUi>()) }
     var isLoading by remember { mutableStateOf(true) }
+    val activity = LocalContext.current as? ComponentActivity
+
 
     // Fetch notifications from Firebase
-    LaunchedEffect(Unit) {
-        dbRef.addValueEventListener(object : ValueEventListener {
-
+    DisposableEffect(Unit) {
+        val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = mutableListOf<NotificationUi>()
                 for (child in snapshot.children) {
                     val notification = child.getValue(NotificationUi::class.java)
                     notification?.let { list.add(it) }
                 }
-                notifications = list.sortedByDescending { it.timestamp } // latest first
-                isLoading = false            }
+                notifications = list.sortedByDescending { it.timestamp }
+                isLoading = false
+            }
 
             override fun onCancelled(error: DatabaseError) {
-                isLoading = false            }
-        })
+                isLoading = false
+            }
+        }
+
+        dbRef.addValueEventListener(listener)
+
+        onDispose {
+            dbRef.removeEventListener(listener)
+        }
     }
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("Notifications", color = White, fontSize = 20.sp) },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = LightBlue)
+                navigationIcon = {
+                    androidx.compose.material3.IconButton(
+                        onClick = { activity?.finish() }
+                    ) {
+                        androidx.compose.material3.Icon(
+                            imageVector = androidx.compose.material.icons.Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = White
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = LightBlue
+                )
             )
+
+
         }
     ) { paddingValues ->
         Box(
@@ -116,18 +146,38 @@ fun NotificationScreen(){
 
 @Composable
 fun NotificationCard(notification: NotificationUi) {
-    Card (
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Column (modifier = Modifier.padding(16.dp)) {
-            Text(notification.title, fontSize = 16.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+        Column(modifier = Modifier.padding(16.dp)) {
+
+            Text(
+                text = notification.title,
+                fontSize = 16.sp,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+            )
+
             Spacer(modifier = Modifier.height(4.dp))
-            Text(notification.message, fontSize = 14.sp, color = androidx.compose.ui.graphics.Color.Gray)
+
+            Text(
+                text = notification.message,
+                fontSize = 14.sp,
+                color = androidx.compose.ui.graphics.Color.Gray
+            )
+
             Spacer(modifier = Modifier.height(4.dp))
-            Text(notification.timestamp, fontSize = 12.sp, color = androidx.compose.ui.graphics.Color.LightGray)
+
+            // ✅ Convert timestamp (Long) to readable date
+            Text(
+                text = android.text.format.DateFormat
+                    .format("dd MMM, hh:mm a", notification.timestamp)
+                    .toString(),
+                fontSize = 12.sp,
+                color = androidx.compose.ui.graphics.Color.LightGray
+            )
         }
     }
 }
