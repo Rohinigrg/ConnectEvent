@@ -37,9 +37,10 @@ fun ViewEventScreen() {
 
     // 🔹 SAME EVENTS AS JOIN PAGE
     val events = listOf(
-        Event("Cleanliness Program", "Community cleaning drive", "Kathmandu", "12 March 2026"),
-        Event("Music Program", "Live music event", "Baneshwor", "18 March 2026"),
-        Event("Tech Meetup", "Discussion on new technologies", "Lalitpur", "22 March 2026")
+        Event("1", "Cleanliness Program", "Community cleaning drive", "Kathmandu", "12 March 2026"),
+        Event("2", "Music Program", "Live music event", "Baneshwor", "18 March 2026"),
+        Event("3", "Tech Meetup", "Discussion on new technologies", "Lalitpur", "22 March 2026"),
+        Event("3", "Blood Donation", "Discussion on new technologies", "Lalitpur", "22 March 2026"),
     )
 
     Scaffold(

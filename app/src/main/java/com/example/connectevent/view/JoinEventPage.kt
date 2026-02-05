@@ -22,6 +22,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.example.connectevent.model.Event
 
 
+
+
 class JoinEventPage : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,11 +39,13 @@ class JoinEventPage : ComponentActivity() {
 fun JoinEventScreen() {
 
     val context = LocalContext.current
+    val userId = "go1LmTtUfWhL5ZRYfmMkAMcuWji1" // later FirebaseAuth
 
     val events = listOf(
-        Event("Cleanliness Program", "Community cleaning drive", "Kathmandu", "12 March 2026"),
-        Event("Music Program", "Live music event", "Baneshwor", "18 March 2026"),
-        Event("Tech Meetup", "Discussion on new technologies", "Lalitpur", "22 March 2026")
+        Event("1", "Cleanliness Program", "Community cleaning drive", "Kathmandu", "12 March 2026"),
+        Event("2", "Music Program", "Live music event", "Baneshwor", "18 March 2026"),
+        Event("3", "Tech Meetup", "Discussion on new technologies", "Lalitpur", "22 March 2026"),
+        Event("3", "Blood Donation", "Discussion on new technologies", "Lalitpur", "22 March 2026"),
     )
 
     Scaffold(
@@ -70,19 +74,14 @@ fun JoinEventScreen() {
                 JoinEventCard(
                     event = event,
                     onJoinClick = {
-                        Toast.makeText(
-                            context,
-                            "Joined ${event.title}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        // Firebase join logic later
-                        val userId = "user123" // later replace with FirebaseAuth UID
-                        val db = FirebaseDatabase.getInstance()
+
+                        val dbRef = FirebaseDatabase.getInstance()
                             .getReference("users")
                             .child(userId)
                             .child("joinedEvents")
+                            .child(event.id)
 
-                        db.push().setValue(event)
+                        dbRef.setValue(event)
                             .addOnSuccessListener {
                                 Toast.makeText(context, "Event Joined", Toast.LENGTH_SHORT).show()
                             }
@@ -114,7 +113,6 @@ fun JoinEventCard(
             )
 
             Spacer(modifier = Modifier.height(4.dp))
-
             Text(event.description)
             Text("📍 ${event.location}")
             Text("📅 ${event.date}")

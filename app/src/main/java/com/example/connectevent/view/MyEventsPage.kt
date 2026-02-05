@@ -39,7 +39,7 @@ class MyEventsPage: ComponentActivity() {
 @Composable
 fun MyEventsScreen() {
     val context = LocalContext.current
-    val userId = "BV9KAazkEeZhvBAYLTCo8Kpjbhh1" // replace later with FirebaseAuth UID
+    val userId = "go1LmTtUfWhL5ZRYfmMkAMcuWji1"
 
     var joinedEvents by remember { mutableStateOf<List<Event>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }

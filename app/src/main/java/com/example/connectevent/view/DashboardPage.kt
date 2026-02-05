@@ -311,13 +311,30 @@ fun EventsScreen(paddingValues: PaddingValues) {
     var searchText by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf("All") }
 
-    val filters = listOf("All", "Today", "Upcoming", "My Events")
+    val filters = listOf("All", "Today", "Upcoming")
 
     val events = listOf(
         EventUi("Cleanliness Program", "Kathmandu", "15 Jan 10:00 AM"),
         EventUi("Music Program", "Baneshwor", "20 Feb 11:00 AM"),
         EventUi("Blood Donation", "Patan", "05 Mar 9:00 AM")
     )
+    val displayedEvents = remember(searchText, selectedFilter) {
+        events.filter { event ->
+
+            // 🔍 Search filter
+            val matchesSearch =
+                event.title.contains(searchText, ignoreCase = true)
+
+            // 🏷 Date filter
+            val matchesFilter = when (selectedFilter) {
+                "Today" -> event.date.contains("15 Jan") // example today
+                "Upcoming" -> !event.date.contains("15 Jan")
+                else -> true // "All"
+            }
+
+            matchesSearch && matchesFilter
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -351,8 +368,8 @@ fun EventsScreen(paddingValues: PaddingValues) {
 
         // 📋 Event List
         LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            items(events) { event ->
-                EventCard(event) {
+            items(displayedEvents) { event ->
+            EventCard(event) {
                     context.startActivity(
                         Intent(context, JoinEventPage::class.java)
                     )
