@@ -12,7 +12,7 @@ import kotlin.collections.toMap
 class UserRepoImpl: UserRepo {
     val auth: FirebaseAuth= FirebaseAuth.getInstance()
     val database: FirebaseDatabase= FirebaseDatabase.getInstance()
-    val ref: DatabaseReference=database.getReference("Users")
+    val ref: DatabaseReference=database.getReference("users")
 
 
 
@@ -84,18 +84,20 @@ class UserRepoImpl: UserRepo {
             }
         }    }
 
+
     override fun editProfile(
         userId: String,
         model: UserModel,
         callback: (Boolean, String) -> Unit
     ) {
-        ref.child(userId).updateChildren(model.toMap()).addOnCompleteListener {
-            if (it.isSuccessful){
-                callback(true,"Profile Updated successfully")
-            }else{
-                callback(false,"${it.exception?.message}")
+        ref.child(userId).setValue(model).addOnCompleteListener {
+            if (it.isSuccessful) {
+                callback(true, "Profile updated successfully")
+            } else {
+                callback(false, it.exception?.message ?: "Error")
             }
-        }    }
+        }
+    }
 
     override fun getUserById(
         userId: String,

@@ -419,6 +419,27 @@ fun EventCard(event: EventUi, onClick: () -> Unit) {
 fun ProfileScreen(paddingValues: PaddingValues) {
 
     val context = LocalContext.current
+    val uid = FirebaseAuth.getInstance().currentUser?.uid
+    val dbRef = FirebaseDatabase.getInstance().getReference("users").child(uid ?: "")
+
+    var name by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var gender by remember { mutableStateOf("") }
+    var dob by remember { mutableStateOf("") }
+    var location by remember { mutableStateOf("") }
+
+    // 🔄 Load profile data
+    LaunchedEffect(uid) {
+        if (uid != null) {
+            dbRef.get().addOnSuccessListener { snapshot ->
+                name = snapshot.child("name").value?.toString() ?: ""
+                email = snapshot.child("email").value?.toString() ?: ""
+                gender = snapshot.child("gender").value?.toString() ?: ""
+                dob = snapshot.child("dob").value?.toString() ?: ""
+                location = snapshot.child("location").value?.toString() ?: ""
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -428,7 +449,6 @@ fun ProfileScreen(paddingValues: PaddingValues) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // Profile Image
         Image(
             painter = painterResource(id = R.drawable.profile),
             contentDescription = "Profile",
@@ -440,26 +460,23 @@ fun ProfileScreen(paddingValues: PaddingValues) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Name
         Text(
-            text = "Rohini Gurung",
+            text = if (name.isNotEmpty()) name else "No Name",
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
         )
 
-        // Email
         Text(
-            text = "rohini@gmail.com",
+            text = if (email.isNotEmpty()) email else "No Email",
             fontSize = 14.sp,
             color = Color.Gray
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Edit Profile Button
         Button(
             onClick = {
-                // TODO: Edit profile later
+                context.startActivity(Intent(context, EditProfilePage::class.java))
             },
             shape = RoundedCornerShape(10.dp)
         ) {
@@ -468,31 +485,28 @@ fun ProfileScreen(paddingValues: PaddingValues) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Info cards
-        ProfileInfoCard("Gender", "Female")
-        ProfileInfoCard("Date of Birth", "2002-01-01")
-        ProfileInfoCard("Location", "Kathmandu")
+        ProfileInfoCard("Gender", gender.ifEmpty { "-" })
+        ProfileInfoCard("Date of Birth", dob.ifEmpty { "-" })
+        ProfileInfoCard("Location", location.ifEmpty { "-" })
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        // Logout Button
         Button(
             onClick = {
                 FirebaseAuth.getInstance().signOut()
-
                 val intent = Intent(context, LoginPage::class.java)
                 intent.flags =
                     Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 context.startActivity(intent)
             },
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(10.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text("Logout", color = Color.White)
         }
     }
 }
+
 
 @Composable
 fun ProfileInfoCard(title: String, value: String) {

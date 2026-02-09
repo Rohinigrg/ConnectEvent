@@ -214,7 +214,7 @@ fun RegisterScreen(){
                     if (success) {
                         val user = UserModel(
                             id = userId,
-                            firstname = fullName.trim(),
+                            name = fullName.trim(),
                             email = email.trim()
                         )
 
