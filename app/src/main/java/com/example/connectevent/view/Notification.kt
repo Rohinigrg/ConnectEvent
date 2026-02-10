@@ -160,7 +160,7 @@ fun NotificationCard(notification: NotificationUi) {
                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
             Text(
                 text = notification.message,
@@ -169,8 +169,6 @@ fun NotificationCard(notification: NotificationUi) {
             )
 
             Spacer(modifier = Modifier.height(4.dp))
-
-            // ✅ Convert timestamp (Long) to readable date
             Text(
                 text = android.text.format.DateFormat
                     .format("dd MMM, hh:mm a", notification.timestamp)
