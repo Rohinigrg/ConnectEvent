@@ -34,9 +34,9 @@ import com.example.connectevent.view.ui.theme.ConnectEventTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import androidx.compose.material3.ExperimentalMaterial3Api
-
-
-
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 
 
 class EditProfilePage : ComponentActivity() {
@@ -65,14 +65,20 @@ fun EditProfileScreen(){
     // 🔄 Load existing data
     LaunchedEffect(uid) {
         if (uid != null) {
-            dbRef.get().addOnSuccessListener { snapshot ->
-                name = snapshot.child("name").value?.toString() ?: ""
-                gender = snapshot.child("gender").value?.toString() ?: ""
-                dob = snapshot.child("dob").value?.toString() ?: ""
-                location = snapshot.child("location").value?.toString() ?: ""
-            }
+            dbRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    name = snapshot.child("name").value?.toString() ?: ""
+                    gender = snapshot.child("gender").value?.toString() ?: ""
+                    dob = snapshot.child("dob").value?.toString() ?: ""
+                    location = snapshot.child("location").value?.toString() ?: ""
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
         }
     }
+
 
     Scaffold(
         topBar = {

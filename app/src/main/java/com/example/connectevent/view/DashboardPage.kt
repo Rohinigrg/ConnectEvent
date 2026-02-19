@@ -61,7 +61,9 @@ import com.example.connectevent.ui.theme.White
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import androidx.compose.foundation.lazy.items
-
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 
 
 class DashboardPage : ComponentActivity() {
@@ -157,18 +159,39 @@ fun DashboardScreen(){
     }
 }
 @Composable
-fun HomeScreen(paddingValues: PaddingValues){
-    val context = LocalContext.current
+fun HomeScreen(paddingValues: PaddingValues) {
 
-    Column (modifier = Modifier
-        .fillMaxSize()
-        .padding(paddingValues)
-        .padding(16.dp))
-    {
+    val context = LocalContext.current
+    val uid = FirebaseAuth.getInstance().currentUser?.uid
+    val dbRef = FirebaseDatabase.getInstance()
+        .getReference("users")
+        .child(uid ?: "")
+
+    var name by remember { mutableStateOf("") }
+
+    LaunchedEffect(uid) {
+        if (uid != null) {
+            dbRef.child("name").addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    name = snapshot.getValue(String::class.java) ?: "User"
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(16.dp)
+    ) {
+
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "Welcome, Rohini👋",
+            text = "Welcome, $name 👋",
             fontSize = 29.sp,
             fontWeight = FontWeight.Bold
         )
@@ -188,58 +211,23 @@ fun HomeScreen(paddingValues: PaddingValues){
 
             DashboardCard(
                 R.drawable.joinevents,
-                modifier = Modifier.weight(0.1f),
+                modifier = Modifier.weight(1f),
                 onClick = {
-                    context.startActivity(
-                        Intent(context, JoinEventPage::class.java)
-                    )
-                })
+                    context.startActivity(Intent(context, JoinEventPage::class.java))
+                }
+            )
+
             DashboardCard(
                 R.drawable.viewevents,
-                modifier = Modifier.weight(0.1f),
+                modifier = Modifier.weight(1f),
                 onClick = {
-                    context.startActivity(
-                        Intent(context, ViewEventPage::class.java)
-                    )
-                })
+                    context.startActivity(Intent(context, ViewEventPage::class.java))
+                }
+            )
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        DashboardCard(
-            image = R.drawable.myevents,
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .align(Alignment.CenterHorizontally),
-            onClick = {
-                context.startActivity(
-                    Intent(context, MyEventsPage::class.java)
-                )
-            }
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = "Upcoming Events",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        UpcomingEventCard(
-            image = R.drawable.cleanliness,
-            title = "Cleanliness Program",
-            place="Kathmandu / 15 Jan / 10:00AM"
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        UpcomingEventCard(
-            image = R.drawable.music,
-            title = "Music Program",
-            place = "Baneshwor / 20 Feb / 11:00AM")
     }
 }
+
 @Composable
 fun DashboardCard(
     image: Int,
