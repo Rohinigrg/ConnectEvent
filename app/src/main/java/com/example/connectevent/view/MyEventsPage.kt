@@ -20,10 +20,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.connectevent.model.Event
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import androidx.compose.ui.unit.sp
 
 class MyEventsPage: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +41,7 @@ class MyEventsPage: ComponentActivity() {
 @Composable
 fun MyEventsScreen() {
     val context = LocalContext.current
-    val userId = "go1LmTtUfWhL5ZRYfmMkAMcuWji1"
+    val userId = FirebaseAuth.getInstance().currentUser!!.uid
 
     var joinedEvents by remember { mutableStateOf<List<Event>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
@@ -124,12 +126,53 @@ fun MyEventsScreen() {
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(event.description)
                                 Text("📍 ${event.location}")
-                                Text("📅 ${event.date}")
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+
+                                    Text(
+                                        text = "📅 ${event.date}"
+                                    )
+
+                                    TextButton(
+                                        onClick = {
+                                            val dbRef = FirebaseDatabase.getInstance()
+                                                .getReference("users")
+                                                .child(userId)
+                                                .child("joinedEvents")
+                                                .child(event.id)
+
+                                            dbRef.removeValue()
+                                                .addOnSuccessListener {
+                                                    Toast.makeText(context, "Event removed", Toast.LENGTH_SHORT).show()
+
+                                                    // Update the UI instantly
+                                                    joinedEvents = joinedEvents.filter { it.id != event.id }
+                                                }
+                                                .addOnFailureListener {
+                                                    Toast.makeText(context, "Failed to remove event", Toast.LENGTH_SHORT).show()
+                                                }
+                                                  },
+                                        contentPadding = PaddingValues(
+                                            horizontal = 6.dp,
+                                            vertical = 0.dp
+                                        )
+                                    ) {
+                                        Text(
+                                            text = "Remove",
+                                            color = androidx.compose.ui.graphics.Color.Red,
+                                            fontSize = 12.sp                                        )
+                                    }
+                                }
                             }
                         }
                     }
                 }
+                }
             }
+
         }
     }
-}

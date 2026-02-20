@@ -211,20 +211,56 @@ fun HomeScreen(paddingValues: PaddingValues) {
 
             DashboardCard(
                 R.drawable.joinevents,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(0.1f),
                 onClick = {
-                    context.startActivity(Intent(context, JoinEventPage::class.java))
-                }
-            )
-
+                    context.startActivity(
+                        Intent(context, JoinEventPage::class.java)
+                    )
+                })
             DashboardCard(
                 R.drawable.viewevents,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(0.1f),
                 onClick = {
-                    context.startActivity(Intent(context, ViewEventPage::class.java))
-                }
-            )
+                    context.startActivity(
+                        Intent(context, ViewEventPage::class.java)
+                    )
+                })
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        DashboardCard(
+            image = R.drawable.myevents,
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .align(Alignment.CenterHorizontally),
+            onClick = {
+                context.startActivity(
+                    Intent(context, MyEventsPage::class.java)
+                )
+            }
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "Upcoming Events",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        UpcomingEventCard(
+            image = R.drawable.cleanliness,
+            title = "Cleanliness Program",
+            place="Kathmandu / 15 Jan / 10:00AM"
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        UpcomingEventCard(
+            image = R.drawable.music,
+            title = "Music Program",
+            place = "Baneshwor / 20 Feb / 11:00AM")
     }
 }
 

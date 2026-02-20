@@ -20,8 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.database.FirebaseDatabase
 import com.example.connectevent.model.Event
-
-
+import com.google.firebase.auth.FirebaseAuth
 
 
 class JoinEventPage : ComponentActivity() {
@@ -39,13 +38,13 @@ class JoinEventPage : ComponentActivity() {
 fun JoinEventScreen() {
 
     val context = LocalContext.current
-    val userId = "go1LmTtUfWhL5ZRYfmMkAMcuWji1" // later FirebaseAuth
+    val userId = FirebaseAuth.getInstance().currentUser!!.uid
 
     val events = listOf(
         Event("1", "Cleanliness Program", "Community cleaning drive", "Kathmandu", "12 March 2026"),
         Event("2", "Music Program", "Live music event", "Baneshwor", "18 March 2026"),
         Event("3", "Tech Meetup", "Discussion on new technologies", "Lalitpur", "22 March 2026"),
-        Event("3", "Blood Donation", "Discussion on new technologies", "Lalitpur", "22 March 2026"),
+        Event("4", "Blood Donation", "Discussion on new technologies", "Lalitpur", "22 March 2026"),
     )
 
     Scaffold(
@@ -84,6 +83,18 @@ fun JoinEventScreen() {
                         dbRef.setValue(event)
                             .addOnSuccessListener {
                                 Toast.makeText(context, "Event Joined", Toast.LENGTH_SHORT).show()
+                                val notificationRef = FirebaseDatabase.getInstance()
+                                    .getReference("notifications")
+                                    .child(userId)
+                                    .push()
+
+                                val notificationMap = mapOf(
+                                    "title" to "Event Joined",
+                                    "message" to "You joined ${event.title}",
+                                    "timestamp" to System.currentTimeMillis()
+                                )
+
+                                notificationRef.setValue(notificationMap)
                             }
                             .addOnFailureListener {
                                 Toast.makeText(context, "Failed to join event", Toast.LENGTH_SHORT).show()

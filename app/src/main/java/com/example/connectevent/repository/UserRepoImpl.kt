@@ -92,6 +92,11 @@ class UserRepoImpl: UserRepo {
     ) {
         ref.child(userId).setValue(model).addOnCompleteListener {
             if (it.isSuccessful) {
+                addNotification(
+                    userId,
+                    "Profile Updated",
+                    "Your profile was updated successfully"
+                )
                 callback(true, "Profile updated successfully")
             } else {
                 callback(false, it.exception?.message ?: "Error")
@@ -139,5 +144,26 @@ class UserRepoImpl: UserRepo {
                 callback(false, error.message, null)
             }
         })
-    }    }
+    }
+    fun addNotification(
+        userId: String,
+        title: String,
+        message: String
+    ) {
+        val notificationRef = FirebaseDatabase.getInstance()
+            .getReference("notifications")
+            .child(userId)
+            .push()
+
+        val notificationMap = mapOf(
+            "title" to title,
+            "message" to message,
+            "timestamp" to System.currentTimeMillis()
+        )
+
+        notificationRef.setValue(notificationMap)
+    }
+
+
+}
 
