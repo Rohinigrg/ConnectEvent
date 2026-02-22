@@ -119,13 +119,23 @@ fun MyEventsScreen() {
                     items(joinedEvents) { event ->
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            elevation = CardDefaults.cardElevation(6.dp)
+                            elevation = CardDefaults.cardElevation(3.dp)
                         ) {
-                            Column(Modifier.padding(16.dp)) {
-                                Text(event.title, fontWeight = FontWeight.Bold)
-                                Spacer(modifier = Modifier.height(4.dp))
+                            Column(
+                                modifier = Modifier.padding(12.dp),
+                                verticalArrangement = Arrangement.spacedBy(3.dp) // equal spacing everywhere
+                            ) {
+
+                                Text(
+                                    text = event.title,
+                                    fontWeight = FontWeight.Bold
+                                )
+
                                 Text(event.description)
+
                                 Text("📍 ${event.location}")
+
+                                Text("📅 ${event.date}")
 
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -133,46 +143,35 @@ fun MyEventsScreen() {
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
 
-                                    Text(
-                                        text = "📅 ${event.date}"
-                                    )
 
                                     TextButton(
                                         onClick = {
-                                            val dbRef = FirebaseDatabase.getInstance()
+                                            val removeRef = FirebaseDatabase.getInstance()
                                                 .getReference("users")
                                                 .child(userId)
                                                 .child("joinedEvents")
                                                 .child(event.id)
 
-                                            dbRef.removeValue()
-                                                .addOnSuccessListener {
-                                                    Toast.makeText(context, "Event removed", Toast.LENGTH_SHORT).show()
-
-                                                    // Update the UI instantly
-                                                    joinedEvents = joinedEvents.filter { it.id != event.id }
-                                                }
-                                                .addOnFailureListener {
-                                                    Toast.makeText(context, "Failed to remove event", Toast.LENGTH_SHORT).show()
-                                                }
-                                                  },
-                                        contentPadding = PaddingValues(
-                                            horizontal = 6.dp,
-                                            vertical = 0.dp
-                                        )
+                                            removeRef.removeValue().addOnSuccessListener {
+                                                Toast.makeText(context, "Event removed", Toast.LENGTH_SHORT).show()
+                                                joinedEvents = joinedEvents.filter { it.id != event.id }
+                                            }
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .wrapContentWidth(Alignment.End),
+                                        contentPadding = PaddingValues(0.dp)
                                     ) {
                                         Text(
                                             text = "Remove",
                                             color = androidx.compose.ui.graphics.Color.Red,
-                                            fontSize = 12.sp                                        )
+                                            fontSize = 11.sp
+                                        )
                                     }
                                 }
                             }
                         }
                     }
                 }
-                }
             }
-
-        }
-    }
+        }}}

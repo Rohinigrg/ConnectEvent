@@ -61,6 +61,7 @@ import com.example.connectevent.ui.theme.White
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.text.font.FontStyle
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -193,13 +194,15 @@ fun HomeScreen(paddingValues: PaddingValues) {
         Text(
             text = "Welcome, $name 👋",
             fontSize = 29.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            fontStyle = FontStyle.Italic
         )
 
         Text(
             text = "Manage Your Community Events!",
             fontSize = 18.sp,
-            color = Color.Gray
+            color = Color.Gray,
+            fontStyle = FontStyle.Italic
         )
 
         Spacer(modifier = Modifier.height(20.dp))

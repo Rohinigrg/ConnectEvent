@@ -14,14 +14,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -47,6 +52,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.text.font.FontWeight
 
 
 class Notification : ComponentActivity() {
@@ -62,22 +68,27 @@ class Notification : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationScreen(){
-    val userId = FirebaseAuth.getInstance().currentUser?.uid
-    val dbRef = FirebaseDatabase.getInstance().getReference("notifications").child(userId ?: "")
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+    val dbRef = FirebaseDatabase.getInstance()
+        .getReference("notifications")
+        .child(userId)
 
     var notifications by remember { mutableStateOf(listOf<NotificationUi>()) }
     var isLoading by remember { mutableStateOf(true) }
     val activity = LocalContext.current as? ComponentActivity
 
-
-    // Fetch notifications from Firebase
+    // 🔥 Fetch notifications
     DisposableEffect(Unit) {
+
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = mutableListOf<NotificationUi>()
                 for (child in snapshot.children) {
                     val notification = child.getValue(NotificationUi::class.java)
-                    notification?.let { list.add(it) }
+                    notification?.let {
+                        it.id = child.key ?: ""   // IMPORTANT
+                        list.add(it)
+                    }
                 }
                 notifications = list.sortedByDescending { it.timestamp }
                 isLoading = false
@@ -100,11 +111,9 @@ fun NotificationScreen(){
             CenterAlignedTopAppBar(
                 title = { Text("Notifications", color = White, fontSize = 20.sp) },
                 navigationIcon = {
-                    androidx.compose.material3.IconButton(
-                        onClick = { activity?.finish() }
-                    ) {
-                        androidx.compose.material3.Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.ArrowBack,
+                    IconButton(onClick = { activity?.finish() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back",
                             tint = White
                         )
@@ -114,68 +123,107 @@ fun NotificationScreen(){
                     containerColor = LightBlue
                 )
             )
-
-
         }
     ) { paddingValues ->
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
             when {
-                isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                isLoading -> CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+
                 notifications.isEmpty() -> Text(
                     "No notifications yet",
                     modifier = Modifier.align(Alignment.Center),
                     fontSize = 16.sp
                 )
+
                 else -> LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(16.dp)
                 ) {
                     items(notifications) { notification ->
-                        NotificationCard(notification)
+                        NotificationCard(
+                            notification = notification,
+                            userId = userId
+                        )
                     }
                 }
-
             }
         }
     }
 }
 
 @Composable
-fun NotificationCard(notification: NotificationUi) {
+fun NotificationCard(
+    notification: NotificationUi,
+    userId: String
+) {
+
+    val dbRef = FirebaseDatabase.getInstance()
+        .getReference("notifications")
+        .child(userId)
+        .child(notification.id)
+
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
 
-            Text(
-                text = notification.title,
-                fontSize = 16.sp,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-            )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        ) {
 
-            Spacer(modifier = Modifier.height(5.dp))
+            // ❌ DELETE ICON
+            IconButton(
+                onClick = { dbRef.removeValue() },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .size(24.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Delete",
+                    tint = androidx.compose.ui.graphics.Color.Red,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
 
-            Text(
-                text = notification.message,
-                fontSize = 14.sp,
-                color = androidx.compose.ui.graphics.Color.Gray
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 28.dp) // prevent overlap with icon
+            ) {
 
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = android.text.format.DateFormat
-                    .format("dd MMM, hh:mm a", notification.timestamp)
-                    .toString(),
-                fontSize = 12.sp,
-                color = androidx.compose.ui.graphics.Color.LightGray
-            )
+                Text(
+                    text = notification.title,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = notification.message,
+                    fontSize = 14.sp
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = android.text.format.DateFormat
+                        .format("dd MMM, hh:mm a", notification.timestamp)
+                        .toString(),
+                    fontSize = 12.sp
+                )
+            }
         }
     }
 }
