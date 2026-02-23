@@ -57,6 +57,9 @@ dependencies {
     implementation(libs.googleid)
     implementation(libs.firebase.database)
 
+    implementation("com.cloudinary:cloudinary-android:2.3.1")
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

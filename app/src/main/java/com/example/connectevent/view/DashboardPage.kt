@@ -62,6 +62,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.text.font.FontStyle
+import coil.compose.AsyncImage
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -211,36 +212,31 @@ fun HomeScreen(paddingValues: PaddingValues) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-
             DashboardCard(
-                R.drawable.joinevents,
-                modifier = Modifier.weight(0.1f),
+                image = R.drawable.joinevents,
+                modifier = Modifier.weight(0.9f), // Equal width
                 onClick = {
-                    context.startActivity(
-                        Intent(context, JoinEventPage::class.java)
-                    )
-                })
+                    context.startActivity(Intent(context, JoinEventPage::class.java))
+                }
+            )
             DashboardCard(
-                R.drawable.viewevents,
-                modifier = Modifier.weight(0.1f),
+                image = R.drawable.viewevents,
+                modifier = Modifier.weight(1f), // Equal width
                 onClick = {
-                    context.startActivity(
-                        Intent(context, ViewEventPage::class.java)
-                    )
-                })
+                    context.startActivity(Intent(context, ViewEventPage::class.java))
+                }
+            )
         }
+        Spacer(modifier = Modifier.height(20.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
-
+// My Events card — same width as one top card (or 0.48f of screen)
         DashboardCard(
             image = R.drawable.myevents,
             modifier = Modifier
-                .fillMaxWidth(0.8f)
+                .fillMaxWidth(0.50f) // matches one card width
                 .align(Alignment.CenterHorizontally),
             onClick = {
-                context.startActivity(
-                    Intent(context, MyEventsPage::class.java)
-                )
+                context.startActivity(Intent(context, MyEventsPage::class.java))
             }
         )
 
@@ -343,7 +339,8 @@ fun EventsScreen(paddingValues: PaddingValues) {
     val events = listOf(
         EventUi("Cleanliness Program", "Kathmandu", "15 Jan 10:00 AM"),
         EventUi("Music Program", "Baneshwor", "20 Feb 11:00 AM"),
-        EventUi("Blood Donation", "Patan", "05 Mar 9:00 AM")
+        EventUi("Blood Donation", "Patan", "05 Mar 9:00 AM"),
+        EventUi("Tech Program", "Dillibazar", "7 Feb 10:00")
     )
     val displayedEvents = remember(searchText, selectedFilter) {
         events.filter { event ->
@@ -455,6 +452,8 @@ fun ProfileScreen(paddingValues: PaddingValues) {
     var dob by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
 
+    var imageUrl by remember { mutableStateOf("") }
+
     // 🔄 Load profile data
     LaunchedEffect(uid) {
         if (uid != null) {
@@ -464,6 +463,7 @@ fun ProfileScreen(paddingValues: PaddingValues) {
                 gender = snapshot.child("gender").value?.toString() ?: ""
                 dob = snapshot.child("dob").value?.toString() ?: ""
                 location = snapshot.child("location").value?.toString() ?: ""
+                imageUrl = snapshot.child("imageUrl").value?.toString() ?: ""
             }
         }
     }
@@ -476,8 +476,8 @@ fun ProfileScreen(paddingValues: PaddingValues) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Image(
-            painter = painterResource(id = R.drawable.profile),
+        AsyncImage(
+            model = if (imageUrl.isNotEmpty()) imageUrl else R.drawable.profile,
             contentDescription = "Profile",
             modifier = Modifier
                 .size(110.dp)

@@ -38,6 +38,14 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 
+import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.ui.platform.LocalContext
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.UploadCallback
+import com.cloudinary.android.callback.ErrorInfo
+
 
 class EditProfilePage : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +60,19 @@ class EditProfilePage : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(){
-    val context = _root_ide_package_.androidx.compose.ui.platform.LocalContext.current
+    val context = LocalContext.current
+
+    val config = mapOf(
+        "cloud_name" to "dfeo4xaob",
+        "api_key" to "967334667241449",
+        "api_secret" to "V_f0Kk59dN9oVGQIv6-Q19RXJgM"
+    )
+
+    try {
+        MediaManager.init(context, config)
+    } catch (e: Exception) {
+    }
+
     val uid = FirebaseAuth.getInstance().currentUser?.uid
 
     val dbRef = FirebaseDatabase.getInstance().getReference("users").child(uid ?: "")
@@ -61,6 +81,14 @@ fun EditProfileScreen(){
     var gender by remember { mutableStateOf("") }
     var dob by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
+
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        imageUri = uri
+    }
 
     // 🔄 Load existing data
     LaunchedEffect(uid) {
@@ -102,7 +130,15 @@ fun EditProfileScreen(){
                 .padding(paddingValues)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
+        )
+
+        {
+            Button(
+                onClick = { launcher.launch("image/*") },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Select Profile Image")
+            }
 
             OutlinedTextField(
                 value = name,
@@ -136,8 +172,9 @@ fun EditProfileScreen(){
 
             Button  (
                 onClick = {
-                    Toast.makeText(context, "Button clicked", Toast.LENGTH_SHORT).show()
+
                     if (uid != null) {
+
                         val updates = mapOf(
                             "name" to name,
                             "gender" to gender,
@@ -146,14 +183,59 @@ fun EditProfileScreen(){
                         )
 
                         dbRef.updateChildren(updates)
-                            .addOnSuccessListener {
-                                Toast.makeText(
-                                    context,
-                                    "Profile updated successfully",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                (context as ComponentActivity).finish()
-                            }
+
+                        imageUri?.let { uri ->
+
+                            MediaManager.get().upload(uri)
+                                .callback(object : UploadCallback {
+
+                                    override fun onSuccess(
+                                        requestId: String?,
+                                        resultData: Map<*, *>?
+                                    ) {
+
+                                        val imageUrl =
+                                            resultData?.get("secure_url").toString()
+
+                                        dbRef.child("imageUrl")
+                                            .setValue(imageUrl)
+
+                                        Toast.makeText(
+                                            context,
+                                            "Profile Updated Successfully",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+
+                                        (context as ComponentActivity).finish()
+                                    }
+
+                                    override fun onError(
+                                        requestId: String?,
+                                        error: ErrorInfo?
+                                    ) {
+                                        Toast.makeText(
+                                            context,
+                                            "Image Upload Failed",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+
+                                    override fun onStart(requestId: String?) {}
+                                    override fun onProgress(
+                                        requestId: String?,
+                                        bytes: Long,
+                                        totalBytes: Long
+                                    ) {}
+                                    override fun onReschedule(
+                                        requestId: String?,
+                                        error: ErrorInfo?
+                                    ) {}
+                                })
+                                .dispatch()
+
+                        } ?: run {
+                            (context as ComponentActivity).finish()
+                        }
                     }
                 },
                 modifier = Modifier.fillMaxWidth()

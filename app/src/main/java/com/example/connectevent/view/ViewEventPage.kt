@@ -37,10 +37,16 @@ fun ViewEventScreen() {
 
     // 🔹 SAME EVENTS AS JOIN PAGE
     val events = listOf(
-        Event("1", "Cleanliness Program", "Community cleaning drive", "Kathmandu", "12 March 2026"),
-        Event("2", "Music Program", "Live music event", "Baneshwor", "18 March 2026"),
-        Event("3", "Tech Meetup", "Discussion on new technologies", "Lalitpur", "22 March 2026"),
-        Event("3", "Blood Donation", "Discussion on new technologies", "Lalitpur", "22 March 2026"),
+        Event("1", "Cleanliness Program", "Community cleaning drive. The program usually begins with an awareness session" +
+                " where participants are educated about the importance of cleanliness, proper waste management, recycling, and maintaining personal hygiene. " +
+            "Kathmandu", "12 March 2026"),
+        Event("2", "Music Program", "Live music event. The program includes various performances such as singing, instrumental music, band performances," +
+                " and cultural songs. It brings people together, promotes unity, and creates a joyful atmosphere." +
+                " among performers.", "Baneshwor", "18 March 2026"),
+        Event("3", "Tech Meetup", "Discussion on new technologies. During the event, experts and speakers present on topics such as software development, artificial" +
+                " intelligence, cybersecurity, mobile app development, and emerging technologies.", "Lalitpur", "22 March 2026"),
+        Event("3", "Blood Donation", "Discussion on new technologies. The event is conducted in collaboration with healthcare professionals who ensure safe and hygienic blood collection." +
+                " Donors are given proper guidance, health check-ups, and refreshments after donation.", "Lalitpur", "22 March 2026"),
     )
 
     Scaffold(
