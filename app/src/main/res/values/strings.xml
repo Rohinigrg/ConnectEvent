@@ -9,4 +9,5 @@
     <string name="title_activity_profile_page">ProfilePage</string>
     <string name="title_activity_notification">Notification</string>
     <string name="title_activity_edit_profile_page">EditProfilePage</string>
+    <string name="title_activity_fake_user_view_model">FakeUserViewModel</string>
 </resources>

@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -60,8 +61,11 @@ class LoginPage : ComponentActivity() {
 }
 
 @Composable
-fun LoginScreen() {
-    val userViewModel=remember { UserViewModel(UserRepoImpl()) }
+fun LoginScreen(
+    userViewModel: UserViewModel = UserViewModel(UserRepoImpl())
+
+) {
+//    val userViewModel = remember { UserViewModel(UserRepoImpl()) }
 
     val context = LocalContext.current
 
@@ -131,6 +135,7 @@ fun LoginScreen() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp)
+                    .testTag("email")
             )
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -152,7 +157,8 @@ fun LoginScreen() {
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 15.dp),
+                    .padding(horizontal = 15.dp)
+                    .testTag("password"),
                 visualTransformation = if (visibility) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = {
@@ -192,18 +198,21 @@ fun LoginScreen() {
                         Toast.makeText(context, "Email and password required", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
+//                    val intent = Intent(context, DashboardPage::class.java)
+//                    context.startActivity(intent)
 
                     userViewModel.login(email.trim(), password.trim()) { success, message ->
                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                         if (success) {
-                            val intent= Intent(context, DashboardPage::class.java)
+                            val intent = Intent(context, DashboardPage::class.java)
                             context.startActivity(intent)
-                                                     }
-                    }
+                        }}
+
                 },
                 modifier = Modifier
                     .width(300.dp)
-                    .height(54.dp),
+                    .height(54.dp)
+                    .testTag("login"),
                 shape = RoundedCornerShape(28.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF1976D2)
@@ -216,8 +225,6 @@ fun LoginScreen() {
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
-
-            val context = LocalContext.current
 
             Text(
                 text = "Don’t have an account? Create one",

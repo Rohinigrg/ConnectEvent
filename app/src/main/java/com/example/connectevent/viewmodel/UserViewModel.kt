@@ -5,11 +5,12 @@ import androidx.lifecycle.ViewModel
 import com.example.connectevent.model.UserModel
 import com.example.connectevent.repository.UserRepo
 
-class UserViewModel(val repo: UserRepo): ViewModel(){
-    fun login(email: String,password: String,
-              callback: (Boolean, String)->Unit){
+open class UserViewModel(val repo: UserRepo): ViewModel(){
+    open fun login(email: String,password: String,
+                   callback: (Boolean, String)->Unit){
         repo.login(email,password,callback)
     }
+
 
     fun register(email: String, password: String,
                  callback: (Boolean, String, String) -> Unit){
@@ -29,11 +30,6 @@ class UserViewModel(val repo: UserRepo): ViewModel(){
 
     }
 
-    fun deleteAccount(userId: String,
-                      callback:(Boolean, String)-> Unit){
-        repo.deleteAccount(userId,callback)
-
-    }
 
     fun editProfile(userId: String, model: UserModel,
                     callback:(Boolean, String)-> Unit){
