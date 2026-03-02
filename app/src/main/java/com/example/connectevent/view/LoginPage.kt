@@ -65,13 +65,15 @@ fun LoginScreen(
     userViewModel: UserViewModel = UserViewModel(UserRepoImpl())
 
 ) {
-//    val userViewModel = remember { UserViewModel(UserRepoImpl()) }
 
     val context = LocalContext.current
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var visibility by remember { mutableStateOf(false) }
+
+//    val isTest = androidx.test.platform.app.InstrumentationRegistry
+//        .getInstrumentation().targetContext != null
 
 
     Scaffold { padding ->
@@ -115,7 +117,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = email,
                 onValueChange = { data ->
-                    email= data
+                    email = data
                 },
                 placeholder = {
                     Text(text = "Enter Your Email")
@@ -166,9 +168,9 @@ fun LoginScreen(
                     }) {
                         Icon(
                             painter = if (visibility)
-                                painterResource(R.drawable.baseline_visibility_off_24)
+                                painterResource(R.drawable.baseline_visibility_24)
                             else
-                                painterResource(R.drawable.baseline_visibility_24),
+                                painterResource(R.drawable.baseline_visibility_off_24),
                             contentDescription = null
                         )
                     }
@@ -192,23 +194,47 @@ fun LoginScreen(
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(25.dp))
-            Button (
+//            Button(
+//                onClick = {
+//                    if(email.isBlank() || password.isBlank()){
+//                        Toast.makeText(context, "Email and password required", Toast.LENGTH_SHORT).show()
+//                        return@Button
+//                    }
+//
+//                    if(isTest){
+//                        // TEST MODE: skip Firebase
+//                        val intent = Intent(context, DashboardPage::class.java)
+//                        context.startActivity(intent)
+//                    } else {
+//                        userViewModel.login(email.trim(), password.trim()){ success, message ->
+//                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+//                            if(success){
+//                                val intent = Intent(context, DashboardPage::class.java)
+//                                context.startActivity(intent)
+//                            }
+//                        }
+//                    }
+//                },
+
+            Button(
                 onClick = {
                     if (email.isBlank() || password.isBlank()) {
-                        Toast.makeText(context, "Email and password required", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Email and password required", Toast.LENGTH_SHORT)
+                            .show()
                         return@Button
                     }
-//                    val intent = Intent(context, DashboardPage::class.java)
-//                    context.startActivity(intent)
 
+                    // Remove the Instrumentation check
                     userViewModel.login(email.trim(), password.trim()) { success, message ->
                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                         if (success) {
                             val intent = Intent(context, DashboardPage::class.java)
                             context.startActivity(intent)
-                        }}
+                        }
+                    }
 
                 },
+
                 modifier = Modifier
                     .width(300.dp)
                     .height(54.dp)

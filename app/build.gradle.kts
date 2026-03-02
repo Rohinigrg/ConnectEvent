@@ -59,6 +59,7 @@ dependencies {
 
     implementation("com.cloudinary:cloudinary-android:2.3.1")
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation(libs.androidx.monitor)
 
     testImplementation("org.mockito:mockito-core:5.11.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")

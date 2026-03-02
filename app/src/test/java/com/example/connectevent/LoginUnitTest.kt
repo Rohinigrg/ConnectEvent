@@ -36,5 +36,4 @@ class LoginUnitTest {
 
         verify(repo).login(eq("ram@gmail.com"), eq("123456"), any())
     }
-
 }

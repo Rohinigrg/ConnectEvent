@@ -37,8 +37,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-
+import android.content.Context
 import android.net.Uri
+import java.io.File
+import java.io.FileOutputStream
+
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.ui.platform.LocalContext
@@ -58,9 +61,26 @@ class EditProfilePage : ComponentActivity() {
         }
     }
 }
+
+fun saveImageToInternalStorage(context: Context, uri: Uri, fileName: String): String? {
+    return try {
+        val inputStream = context.contentResolver.openInputStream(uri)
+        val file = File(context.filesDir, fileName) // internal storage
+        val outputStream = FileOutputStream(file)
+        inputStream?.copyTo(outputStream)
+        inputStream?.close()
+        outputStream.close()
+        file.absolutePath // return path of saved file
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(){
+
     val context = LocalContext.current
 
     val config = mapOf(
@@ -90,6 +110,12 @@ fun EditProfileScreen(){
     ) { uri ->
         imageUri = uri
     }
+
+    val savedImageFile = File(context.filesDir, "profile_$uid.jpg")
+    if (savedImageFile.exists()) {
+        imageUri = Uri.fromFile(savedImageFile) // display this in an Image composable
+    }
+
 
     // 🔄 Load existing data
     LaunchedEffect(uid) {
@@ -171,9 +197,8 @@ fun EditProfileScreen(){
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Button  (
+            Button(
                 onClick = {
-
                     if (uid != null) {
 
                         val updates = mapOf(
@@ -182,59 +207,34 @@ fun EditProfileScreen(){
                             "dob" to dob,
                             "location" to location
                         )
-
                         dbRef.updateChildren(updates)
 
+                        // ✅ Save the image permanently
                         imageUri?.let { uri ->
+                            val savedPath = saveImageToInternalStorage(context, uri, "profile_$uid.jpg")
+                            if (savedPath != null) {
+                                Toast.makeText(context, "Image saved locally", Toast.LENGTH_SHORT).show()
+                            }
 
+                            // Upload to Cloudinary as before
                             MediaManager.get().upload(uri)
                                 .callback(object : UploadCallback {
-
-                                    override fun onSuccess(
-                                        requestId: String?,
-                                        resultData: Map<*, *>?
-                                    ) {
-
-                                        val imageUrl =
-                                            resultData?.get("secure_url").toString()
-
-                                        dbRef.child("imageUrl")
-                                            .setValue(imageUrl)
-
-                                        Toast.makeText(
-                                            context,
-                                            "Profile Updated Successfully",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-
+                                    override fun onSuccess(requestId: String?, resultData: Map<*, *>?) {
+                                        val imageUrl = resultData?.get("secure_url").toString()
+                                        dbRef.child("imageUrl").setValue(imageUrl)
+                                        Toast.makeText(context, "Profile Updated Successfully", Toast.LENGTH_SHORT).show()
                                         (context as ComponentActivity).finish()
                                     }
-
-                                    override fun onError(
-                                        requestId: String?,
-                                        error: ErrorInfo?
-                                    ) {
-                                        Toast.makeText(
-                                            context,
-                                            "Image Upload Failed",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                    override fun onError(requestId: String?, error: ErrorInfo?) {
+                                        Toast.makeText(context, "Image Upload Failed", Toast.LENGTH_SHORT).show()
                                     }
-
                                     override fun onStart(requestId: String?) {}
-                                    override fun onProgress(
-                                        requestId: String?,
-                                        bytes: Long,
-                                        totalBytes: Long
-                                    ) {}
-                                    override fun onReschedule(
-                                        requestId: String?,
-                                        error: ErrorInfo?
-                                    ) {}
+                                    override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {}
+                                    override fun onReschedule(requestId: String?, error: ErrorInfo?) {}
                                 })
                                 .dispatch()
-
                         } ?: run {
+                            // If no image selected, just finish
                             (context as ComponentActivity).finish()
                         }
                     }

@@ -61,6 +61,7 @@ import com.example.connectevent.ui.theme.White
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import coil.compose.AsyncImage
 import com.google.firebase.database.DataSnapshot
@@ -81,22 +82,25 @@ class DashboardPage : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen(){
+fun DashboardScreen() {
     val context = LocalContext.current
+    var selectedIndex by remember { mutableIntStateOf(0) }
 
-    data class NavItem(val label: String,val icon:Int)
-
-
+    data class NavItem(val label: String, val icon: Int)
     val listItems = listOf(
         NavItem(label = "Home", R.drawable.baseline_home_24),
         NavItem(label = "Events", R.drawable.baseline_event_24),
-        NavItem(label = "Profile", R.drawable.outline_account_circle_24),
+        NavItem(label = "Profile", R.drawable.outline_account_circle_24)
     )
-    var selectedIndex by remember { mutableIntStateOf(0) }
 
-
-    Scaffold (
-        topBar = {
+    // Wrap the entire screen in a Column with testTag
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag("dashboardScreen") // NOW it wraps everything
+    ) {
+        Scaffold(
+            topBar = {
                 CenterAlignedTopAppBar(
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                         containerColor = LightBlue,
@@ -109,54 +113,46 @@ fun DashboardScreen(){
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Spacer(modifier = Modifier.width(20.dp))
-
                             Text(
                                 text = "ConnectEvent",
                                 fontWeight = FontWeight.Bold,
-                                color = White,
-
+                                color = White
                             )
                             Icon(
                                 painter = painterResource(R.drawable.baseline_notifications_24),
-                                contentDescription =null,
+                                contentDescription = null,
                                 tint = Color.White,
-                                        modifier = Modifier.clickable {
+                                modifier = Modifier.clickable {
                                     context.startActivity(Intent(context, Notification::class.java))
                                 }
-                         )
-                    }}
-
-
-                )
-        },
-                bottomBar = {
-                    NavigationBar {
-                        listItems.forEachIndexed { index, item ->
-                            NavigationBarItem(
-                                selected = selectedIndex == index,
-                                onClick = {
-                                    selectedIndex = index
-//                                    if (item.label == "Profile") {
-//                                        context.startActivity(Intent(context, ProfilePage::class.java))
-//                                    }
-                                },
-                                icon = {
-                                    Icon(
-                                        painter = painterResource(item.icon),
-                                        contentDescription = item.label
-                                    )
-                                },
-                                label = { Text(item.label) }
                             )
                         }
                     }
-
+                )
+            },
+            bottomBar = {
+                NavigationBar {
+                    listItems.forEachIndexed { index, item ->
+                        NavigationBarItem(
+                            selected = selectedIndex == index,
+                            onClick = { selectedIndex = index },
+                            icon = {
+                                Icon(
+                                    painter = painterResource(item.icon),
+                                    contentDescription = item.label
+                                )
+                            },
+                            label = { Text(item.label) }
+                        )
+                    }
                 }
-    ){paddingValues ->
-        when (selectedIndex) {
-            0 -> HomeScreen(paddingValues)
-            1 -> EventsScreen(paddingValues)
-            2 -> ProfileScreen(paddingValues)
+            }
+        ) { paddingValues ->
+            when (selectedIndex) {
+                0 -> HomeScreen(paddingValues)
+                1 -> EventsScreen(paddingValues)
+                2 -> ProfileScreen(paddingValues)
+            }
         }
     }
 }

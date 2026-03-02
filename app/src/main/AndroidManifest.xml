@@ -25,14 +25,14 @@
 
         <!-- Normal Activities (NO intent-filter here) -->
         <activity android:name=".view.DashboardPage" android:exported="true"/>
-        <activity android:name=".view.LoginPage" />
-        <activity android:name=".view.RegisterPage" />
-        <activity android:name=".view.ForgetPasswordPage" />
-        <activity android:name=".view.JoinEventPage" />
-        <activity android:name=".view.ViewEventPage" />
-        <activity android:name=".view.MyEventsPage" />
-        <activity android:name=".view.EditProfilePage" />
-        <activity android:name=".view.Notification" />
+        <activity android:name=".view.LoginPage" android:exported="true" />
+        <activity android:name=".view.RegisterPage" android:exported="true"/>
+        <activity android:name=".view.ForgetPasswordPage" android:exported="true"/>
+        <activity android:name=".view.JoinEventPage" android:exported="true"/>
+        <activity android:name=".view.ViewEventPage" android:exported="true"/>
+        <activity android:name=".view.MyEventsPage" android:exported="true"/>
+        <activity android:name=".view.EditProfilePage" android:exported="true"/>
+        <activity android:name=".view.Notification" android:exported="true"/>
 
     </application>
 
