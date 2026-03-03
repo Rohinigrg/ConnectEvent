@@ -157,9 +157,9 @@ fun RegisterScreen(){
                 }) {
                     Icon(
                         painter = if (passwordVisibility)
-                            painterResource(R.drawable.baseline_visibility_off_24)
+                            painterResource(R.drawable.baseline_visibility_24)
                         else
-                            painterResource(R.drawable.baseline_visibility_24),
+                            painterResource(R.drawable.baseline_visibility_off_24),
                         contentDescription = "Toggle password visibility"
                     )
                 }

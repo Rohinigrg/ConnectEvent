@@ -72,8 +72,8 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     var visibility by remember { mutableStateOf(false) }
 
-//    val isTest = androidx.test.platform.app.InstrumentationRegistry
-//        .getInstrumentation().targetContext != null
+//        val isTest = androidx.test.platform.app.InstrumentationRegistry
+//       .getInstrumentation().targetContext != null
 
 
     Scaffold { padding ->
